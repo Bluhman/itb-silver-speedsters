@@ -12,7 +12,15 @@ SS_Weapon_Ramp = Skill:new{
         Unit = Point(2,4),
         Target = Point(2,2),
         Second_Click = Point(3,2)
-    }
+    },
+    Limited = 2,
+    Upgrades = 1,
+    UpgradeList = {"+1 Use"}
+}
+
+SS_Weapon_Ramp_A = SS_Weapon_Ramp:new{
+    UpgradeDescription = "Gain an additional use.",
+    Limited = 3
 }
 
 --Picking where the pad will end up.
@@ -108,7 +116,7 @@ Speedster_Ramp_3 = Speedster_Ramp_0:new{
 SS_Weapon_Accel_0 = Skill:new{
     Name = "Accelerate",
     Class = "Unique",
-    Description = "Send a target adjacent to the pad flying across it as far as possible.",
+    Description = "Fling a target adjacent to the pad across it as far as possible, colliding with obstacles.",
     LaunchSound = "/weapons/charge",
     Icon = "weapons/deploy_fx_accel.png",
     TipImage = {
@@ -133,6 +141,8 @@ function SS_Weapon_Accel_0:GetSkillEffect(p1, p2)
     local target = GetProjectileEnd(p1, p2, pathing)
     local distance = affectedPawnTile:Manhattan(target)
 
+    local doDamage = true
+
     if not Board:IsBlocked(target,pathing) then -- dont attack an empty edge square, just run to the edge
 		doDamage = false
 		target = target + DIR_VECTORS[dir]
@@ -148,17 +158,41 @@ function SS_Weapon_Accel_0:GetSkillEffect(p1, p2)
         end
     end
 
+    if doDamage then
+        --The affected target will now collide with something.
+        local push = SpaceDamage(target - DIR_VECTORS[dir], 0, dir)
+        ret:AddDamage(push)
+    end
+
     return ret
 end
 
 SS_Weapon_Accel_1 = SS_Weapon_Accel_0:new{
     EffectDirection = 1,
+    TipImage = {
+        Unit = Point(2,2),
+        Target = Point(3,2),
+        Enemy = Point(1,2),
+        CustomPawn = "Speedster_Ramp_1"
+    }
 }
 SS_Weapon_Accel_2 = SS_Weapon_Accel_0:new{
-    EffectDirection = 2
+    EffectDirection = 2,
+    TipImage = {
+        Unit = Point(2,2),
+        Target = Point(2,3),
+        Enemy = Point(2,1),
+        CustomPawn = "Speedster_Ramp_2"
+    }
 }
 SS_Weapon_Accel_3 = SS_Weapon_Accel_0:new{
-    EffectDirection = 3
+    EffectDirection = 3,
+    TipImage = {
+        Unit = Point(2,2),
+        Target = Point(1,2),
+        Enemy = Point(3,2),
+        CustomPawn = "Speedster_Ramp_3"
+    }
 }
 
 SS_Weapon_Ramper_0 = Skill:new{
@@ -197,13 +231,31 @@ function SS_Weapon_Ramper_0:GetSkillEffect(p1, p2)
 end
 
 SS_Weapon_Ramper_1 = SS_Weapon_Ramper_0:new{
-    EffectDirection = 1
+    EffectDirection = 1,
+    TipImage = {
+        Unit = Point(2,2),
+        Target = Point(4,2),
+        Enemy = Point(1,2),
+        CustomPawn = "Speedster_Ramp_1"
+    }
 }
 SS_Weapon_Ramper_2 = SS_Weapon_Ramper_0:new{
-    EffectDirection = 2
+    EffectDirection = 2,
+    TipImage = {
+        Unit = Point(2,2),
+        Target = Point(2,4),
+        Enemy = Point(2,1),
+        CustomPawn = "Speedster_Ramp_2"
+    }
 }
 SS_Weapon_Ramper_3 = SS_Weapon_Ramper_0:new{
-    EffectDirection = 3
+    EffectDirection = 3,
+    TipImage = {
+        Unit = Point(2,2),
+        Target = Point(0,2),
+        Enemy = Point(3,2),
+        CustomPawn = "Speedster_Ramp_3"
+    }
 }
 
 --Functions used to automate creation of these weapons.

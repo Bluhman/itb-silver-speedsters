@@ -43,25 +43,25 @@ function mod:init()
             Name="accel_mine_0",
             NoHanger = true,
             Default = {PosX = -28, PosY = 1},
-            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.02}
+            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.04}
         },
         {
             Name="accel_mine_1",
             NoHanger = true,
             Default = {PosX = -28, PosY = 1},
-            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.02}
+            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.04}
         },
         {
             Name="accel_mine_2",
             NoHanger = true,
             Default = {PosX = -28, PosY = 1},
-            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.02}
+            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.04}
         },
         {
             Name="accel_mine_3",
             NoHanger = true,
             Default = {PosX = -28, PosY = 1},
-            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.02}
+            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.04}
         }
 
     )
