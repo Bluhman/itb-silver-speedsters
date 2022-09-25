@@ -13,14 +13,14 @@ SS_Weapon_Ramp = Skill:new{
         Target = Point(2,2),
         Second_Click = Point(3,2)
     },
-    Limited = 2,
+    Limited = 3,
     Upgrades = 1,
     UpgradeList = {"+1 Use"}
 }
 
 SS_Weapon_Ramp_A = SS_Weapon_Ramp:new{
     UpgradeDescription = "Gain an additional use.",
-    Limited = 3
+    Limited = 4
 }
 
 --Picking where the pad will end up.
