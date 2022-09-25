@@ -27,23 +27,25 @@ SS_Weapon_Pummel = Skill:new{
 function SS_Weapon_Pummel:GetTargetArea(p1)
     local ret = PointList()
     for dir = DIR_START, DIR_END do
-        local prevStandable = true
+        local previousStandable = true
         for i = 1, self.PathSize do
             local currentTile = p1 + DIR_VECTORS[dir]*i
-            if not Board:IsValid(currentTile) then
+            if not Board:IsValid(currentTile) then --Off the board.
                 break
             end
-            if not Board:IsBlocked(currentTile, Pawn:GetPathProf()) then
+            if not Board:IsBlocked(currentTile, Pawn:GetPathProf()) then --If the pawn can normally move here
                 ret:push_back(currentTile)
-                prevStandable = true
-            elseif Board:IsPawnSpace(currentTile) and self.PhaseChars ~= 1 then
+                previousStandable = true
+            elseif Board:IsPawnSpace(currentTile) and self.PhaseChars ~= 1 then --If there's another pawn in the way and we cannot phase
                 ret:push_back(currentTile)
                 break
-            elseif Board:IsPawnSpace(currentTile) and self.PhaseChars == 1 and prevStandable then
-                prevStandable = false
+            elseif Board:IsPawnSpace(currentTile) and self.PhaseChars == 1 and previousStandable then --If we CAN phase but the tile directly before this found pawn is free, we can punch it.
+                previousStandable = false
                 ret:push_back(currentTile)
-            elseif Board:IsBlocked(currentTile, Pawn:GetPathProf()) and not Board:IsPawnSpace(currentTile) then
-                ret:push_back(currentTile)
+            elseif Board:IsBlocked(currentTile, Pawn:GetPathProf()) and not Board:IsPawnSpace(currentTile) then --If the given space is obstructed by anything else that isn't a pawn, we're done.
+                if previousStandable then
+                    ret:push_back(currentTile)
+                end
                 break
             end
         end
