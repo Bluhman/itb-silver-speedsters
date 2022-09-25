@@ -15,7 +15,8 @@ SS_Weapon_Ramp = Skill:new{
     },
     Limited = 3,
     Upgrades = 1,
-    UpgradeList = {"+1 Use"}
+    UpgradeList = {"+1 Use"},
+    UpgradeCost = {1}
 }
 
 SS_Weapon_Ramp_A = SS_Weapon_Ramp:new{
