@@ -19,13 +19,13 @@ SS_Weapon_Ramp = Skill:new{
     },
     Limited = 3,
     Upgrades = 1,
-    UpgradeList = {"+1 Use"},
+    UpgradeList = {"Unlimited Uses"},
     UpgradeCost = {1}
 }
 
 SS_Weapon_Ramp_A = SS_Weapon_Ramp:new{
-    UpgradeDescription = "Gain an additional use.",
-    Limited = 4
+    UpgradeDescription = "Can be used any number of times.",
+    Limited = 0
 }
 
 --Picking where the pad will end up.
