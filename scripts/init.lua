@@ -107,7 +107,7 @@ function mod:init()
     require(self.scriptPath.."weapon_aries")
     require(self.scriptPath.."weapon_pummel")
     --require(self.scriptPath.."weapon_track") --this is broken af.
-    require(self.scriptPath.."weapon_ramp")
+    fancyRamp = require(self.scriptPath.."weapon_ramp")
     fancyWeapon = require(self.scriptPath.."weapon_bumper")
 end
 
@@ -115,8 +115,9 @@ function mod:load(options, version)
     -- Load Fancy Pants
     bluhSPEED_modApiExt:load(self, options, version)
 
-    --DO FANCY HOOK
+    --DO FANCY HOOKZ
     fancyWeapon:load(bluhSPEED_modApiExt, options)
+    fancyRamp:load()
 
     --ADD THE SQUAD!!
     modApi:addSquad(

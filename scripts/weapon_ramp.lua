@@ -1,3 +1,6 @@
+--It's another fancy mess:
+local this = {}
+
 SS_Weapon_Ramp = Skill:new{
     Name = "Acceleration Track",
     Description = "Places down an acceleration pad that can force a target across from it to either dash as far as possible, or be flung a set distance.",
@@ -7,6 +10,7 @@ SS_Weapon_Ramp = Skill:new{
     LaunchSound = "/weapons/area_shield",
     ImpactSound = "/impact/generic/mech",
     Explo = "explopush1_",
+    DeployPrefix = "Speedster_Ramp_",
     TwoClick = true,
     TipImage = {
         Unit = Point(2,4),
@@ -79,7 +83,7 @@ function SS_Weapon_Ramp:GetFinalEffect(p1,p2,p3)
     ret:AddBounce(p2,3)
 
     local pawnLoc = SpaceDamage(p2, 0)
-    pawnLoc.sPawn = "Speedster_Ramp_"..dir
+    pawnLoc.sPawn = self.DeployPrefix..dir
     pawnLoc.sAnimation = self.Explo..dir
     ret:AddDamage(pawnLoc)
 
@@ -289,3 +293,31 @@ function SS_RampTargeting(point, dir)
 
     return ret
 end
+
+local function stringStarts(fullString, startString)
+    return string.sub(fullString, 1, string.len(startString)) == startString
+end
+
+-- Cursed hook to make it possible for any units to move through these ramps (but not end a turn on one.)
+local turnChangeHook = function(mission)
+    local currentTeam = Game:GetTeamTurn()
+    --This is done by making the acceleration pads get set to the team that's currently taking a turn.
+    for Mx = 0, 7 do
+        for My = 0, 7 do
+            local point = Point(Mx,My)
+            if Board:IsPawnSpace(point) and stringStarts(Board:GetPawn(point):GetType(), "Speedster_Ramp_") then
+                Board:GetPawn(point):SetTeam(currentTeam)
+
+                if currentTeam == TEAM_ENEMY then
+                    --I'll use this if the pads decide to go rogue.
+                end
+            end
+        end
+    end
+end
+
+function this:load()
+    modApi:addNextTurnHook(turnChangeHook)
+end
+
+return this
