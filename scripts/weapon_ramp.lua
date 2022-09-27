@@ -1,3 +1,6 @@
+--It's another fancy mess:
+local this = {}
+
 SS_Weapon_Ramp = Skill:new{
     Name = "Acceleration Track",
     Description = "Places down an acceleration pad that can force a target across from it to either dash as far as possible, or be flung a set distance.",
@@ -7,12 +10,22 @@ SS_Weapon_Ramp = Skill:new{
     LaunchSound = "/weapons/area_shield",
     ImpactSound = "/impact/generic/mech",
     Explo = "explopush1_",
+    DeployPrefix = "Speedster_Ramp_",
     TwoClick = true,
     TipImage = {
         Unit = Point(2,4),
         Target = Point(2,2),
         Second_Click = Point(3,2)
-    }
+    },
+    Limited = 3,
+    Upgrades = 1,
+    UpgradeList = {"Unlimited Uses"},
+    UpgradeCost = {1}
+}
+
+SS_Weapon_Ramp_A = SS_Weapon_Ramp:new{
+    UpgradeDescription = "Can be used any number of times.",
+    Limited = 0
 }
 
 --Picking where the pad will end up.
@@ -70,7 +83,7 @@ function SS_Weapon_Ramp:GetFinalEffect(p1,p2,p3)
     ret:AddBounce(p2,3)
 
     local pawnLoc = SpaceDamage(p2, 0)
-    pawnLoc.sPawn = "Speedster_Ramp_"..dir
+    pawnLoc.sPawn = self.DeployPrefix..dir
     pawnLoc.sAnimation = self.Explo..dir
     ret:AddDamage(pawnLoc)
 
@@ -108,7 +121,7 @@ Speedster_Ramp_3 = Speedster_Ramp_0:new{
 SS_Weapon_Accel_0 = Skill:new{
     Name = "Accelerate",
     Class = "Unique",
-    Description = "Send a target adjacent to the pad flying across it as far as possible.",
+    Description = "Fling a target adjacent to the pad across it as far as possible, colliding with obstacles.",
     LaunchSound = "/weapons/charge",
     Icon = "weapons/deploy_fx_accel.png",
     TipImage = {
@@ -133,6 +146,8 @@ function SS_Weapon_Accel_0:GetSkillEffect(p1, p2)
     local target = GetProjectileEnd(p1, p2, pathing)
     local distance = affectedPawnTile:Manhattan(target)
 
+    local doDamage = true
+
     if not Board:IsBlocked(target,pathing) then -- dont attack an empty edge square, just run to the edge
 		doDamage = false
 		target = target + DIR_VECTORS[dir]
@@ -148,17 +163,41 @@ function SS_Weapon_Accel_0:GetSkillEffect(p1, p2)
         end
     end
 
+    if doDamage then
+        --The affected target will now collide with something.
+        local push = SpaceDamage(target - DIR_VECTORS[dir], 0, dir)
+        ret:AddDamage(push)
+    end
+
     return ret
 end
 
 SS_Weapon_Accel_1 = SS_Weapon_Accel_0:new{
     EffectDirection = 1,
+    TipImage = {
+        Unit = Point(2,2),
+        Target = Point(3,2),
+        Enemy = Point(1,2),
+        CustomPawn = "Speedster_Ramp_1"
+    }
 }
 SS_Weapon_Accel_2 = SS_Weapon_Accel_0:new{
-    EffectDirection = 2
+    EffectDirection = 2,
+    TipImage = {
+        Unit = Point(2,2),
+        Target = Point(2,3),
+        Enemy = Point(2,1),
+        CustomPawn = "Speedster_Ramp_2"
+    }
 }
 SS_Weapon_Accel_3 = SS_Weapon_Accel_0:new{
-    EffectDirection = 3
+    EffectDirection = 3,
+    TipImage = {
+        Unit = Point(2,2),
+        Target = Point(1,2),
+        Enemy = Point(3,2),
+        CustomPawn = "Speedster_Ramp_3"
+    }
 }
 
 SS_Weapon_Ramper_0 = Skill:new{
@@ -197,13 +236,31 @@ function SS_Weapon_Ramper_0:GetSkillEffect(p1, p2)
 end
 
 SS_Weapon_Ramper_1 = SS_Weapon_Ramper_0:new{
-    EffectDirection = 1
+    EffectDirection = 1,
+    TipImage = {
+        Unit = Point(2,2),
+        Target = Point(4,2),
+        Enemy = Point(1,2),
+        CustomPawn = "Speedster_Ramp_1"
+    }
 }
 SS_Weapon_Ramper_2 = SS_Weapon_Ramper_0:new{
-    EffectDirection = 2
+    EffectDirection = 2,
+    TipImage = {
+        Unit = Point(2,2),
+        Target = Point(2,4),
+        Enemy = Point(2,1),
+        CustomPawn = "Speedster_Ramp_2"
+    }
 }
 SS_Weapon_Ramper_3 = SS_Weapon_Ramper_0:new{
-    EffectDirection = 3
+    EffectDirection = 3,
+    TipImage = {
+        Unit = Point(2,2),
+        Target = Point(0,2),
+        Enemy = Point(3,2),
+        CustomPawn = "Speedster_Ramp_3"
+    }
 }
 
 --Functions used to automate creation of these weapons.
@@ -236,3 +293,31 @@ function SS_RampTargeting(point, dir)
 
     return ret
 end
+
+local function stringStarts(fullString, startString)
+    return string.sub(fullString, 1, string.len(startString)) == startString
+end
+
+-- Cursed hook to make it possible for any units to move through these ramps (but not end a turn on one.)
+local turnChangeHook = function(mission)
+    local currentTeam = Game:GetTeamTurn()
+    --This is done by making the acceleration pads get set to the team that's currently taking a turn.
+    for Mx = 0, 7 do
+        for My = 0, 7 do
+            local point = Point(Mx,My)
+            if Board:IsPawnSpace(point) and stringStarts(Board:GetPawn(point):GetType(), "Speedster_Ramp_") then
+                Board:GetPawn(point):SetTeam(currentTeam)
+
+                if currentTeam == TEAM_ENEMY then
+                    --I'll use this if the pads decide to go rogue.
+                end
+            end
+        end
+    end
+end
+
+function this:load()
+    modApi:addNextTurnHook(turnChangeHook)
+end
+
+return this

@@ -43,28 +43,42 @@ function mod:init()
             Name="accel_mine_0",
             NoHanger = true,
             Default = {PosX = -28, PosY = 1},
-            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.02}
+            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.04}
         },
         {
             Name="accel_mine_1",
             NoHanger = true,
             Default = {PosX = -28, PosY = 1},
-            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.02}
+            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.04}
         },
         {
             Name="accel_mine_2",
             NoHanger = true,
             Default = {PosX = -28, PosY = 1},
-            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.02}
+            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.04}
         },
         {
             Name="accel_mine_3",
             NoHanger = true,
             Default = {PosX = -28, PosY = 1},
-            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.02}
+            Animated = {PosX = -28, PosY = 1, NumFrames = 2, Time = 0.04}
         }
 
     )
+
+    --Manually add the sprite for acceleration mine death because it's the same for all four variants:
+    modApi:appendAsset("img/units/player/accel_mine_death.png", self.resourcePath.."img/units/player/accel_mine_death.png")
+    local accelMineDeathAnim = {
+        PosX = -28, PosY = 1,
+        NumFrames = 8,
+        Image = "units/player/accel_mine_death.png",
+        Time = 0.09,
+        Loop = false
+    }
+    ANIMS.accel_mine_0d = ANIMS.MechUnit:new(accelMineDeathAnim)
+    ANIMS.accel_mine_1d = ANIMS.MechUnit:new(accelMineDeathAnim)
+    ANIMS.accel_mine_2d = ANIMS.MechUnit:new(accelMineDeathAnim)
+    ANIMS.accel_mine_3d = ANIMS.MechUnit:new(accelMineDeathAnim)
 
     --boost pad sprites
     --for i=0,3 do
@@ -107,7 +121,7 @@ function mod:init()
     require(self.scriptPath.."weapon_aries")
     require(self.scriptPath.."weapon_pummel")
     --require(self.scriptPath.."weapon_track") --this is broken af.
-    require(self.scriptPath.."weapon_ramp")
+    fancyRamp = require(self.scriptPath.."weapon_ramp")
     fancyWeapon = require(self.scriptPath.."weapon_bumper")
 end
 
@@ -115,8 +129,9 @@ function mod:load(options, version)
     -- Load Fancy Pants
     bluhSPEED_modApiExt:load(self, options, version)
 
-    --DO FANCY HOOK
+    --DO FANCY HOOKZ
     fancyWeapon:load(bluhSPEED_modApiExt, options)
+    fancyRamp:load()
 
     --ADD THE SQUAD!!
     modApi:addSquad(
