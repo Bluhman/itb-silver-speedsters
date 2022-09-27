@@ -66,6 +66,20 @@ function mod:init()
 
     )
 
+    --Manually add the sprite for acceleration mine death because it's the same for all four variants:
+    modApi:appendAsset("img/units/player/accel_mine_death.png", self.resourcePath.."img/units/player/accel_mine_death.png")
+    local accelMineDeathAnim = {
+        PosX = -28, PosY = 1,
+        NumFrames = 8,
+        Image = "units/player/accel_mine_death.png",
+        Time = 0.09,
+        Loop = false
+    }
+    ANIMS.accel_mine_0d = ANIMS.MechUnit:new(accelMineDeathAnim)
+    ANIMS.accel_mine_1d = ANIMS.MechUnit:new(accelMineDeathAnim)
+    ANIMS.accel_mine_2d = ANIMS.MechUnit:new(accelMineDeathAnim)
+    ANIMS.accel_mine_3d = ANIMS.MechUnit:new(accelMineDeathAnim)
+
     --boost pad sprites
     --for i=0,3 do
     --    modApi:appendAsset("img/combat/accel_mine_"..i..".png",  self.resourcePath.."img/combat/accel_mine_"..i..".png")
